@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>airQuality Trend</title>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel = "stylesheet" href="trendPlot.css">
+    </head>
+
+    <!-- function ( row ) {
+        return !d3.entries(row).some( 
+          function( keyValue ) {
+            return ( isRequiredKey( keyValue.key ) && isNaN( keyValue.value ) )
+          }
+        );
+      }; -->
+    
+    <body>
+            <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                      <!-- Brand and toggle get grouped for better mobile display -->
+                      <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="scatterplot.html">i-DRC</a>
+                      </div>
+                  
+                      <!-- Collect the nav links, forms, and other content for toggling -->
+                      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                        <ul class="nav navbar-nav">
+                          <li class=""><a href="Room2.html">Room2 <span class="sr-only">(current)</span></a></li>
+                          <li><a href="#">Room3</a></li>
+                          <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">Action</a></li>
+                              <li><a href="#">Another action</a></li>
+                              <li><a href="#">Something else here</a></li>
+                              <li role="separator" class="divider"></li>
+                              <li><a href="#">Separated link</a></li>
+                              <li role="separator" class="divider"></li>
+                              <li><a href="#">One more separated link</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                        <form class="navbar-form navbar-left">
+                          <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search">
+                          </div>
+                          <button type="submit" class="btn btn-default">Submit</button>
+                        </form>
+                        <ul class="nav navbar-nav navbar-right">
+                          <li><a href="#">Login</a></li>
+                          <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                              <li><a href="#">Action</a></li>
+                              <li><a href="#">Another action</a></li>
+                              <li><a href="#">Something else here</a></li>
+                              <li role="separator" class="divider"></li>
+                              <li><a href="#">Separated link</a></li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div><!-- /.navbar-collapse -->
+                    </div><!-- /.container-fluid -->
+                  </nav>
+
+        <script type="text/javascript">
+            d3.csv("oneDayData.csv", function(data) {
+            //d3.csv("Outdoor+ Indoor AVG TEMP-RH-CO2_2015-2017_15mins.csv", function(data) {
+                // data.filter(function(d)) {
+                //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
+                //         return false;
+                //     }
+                    
+                // }
+
+
+
+                // data.filter(function(d) {
+                //     return !d3.entries(d).some(
+                //         function(keyValue) {
+                //             return (isNaN(keyValue.value))
+                //         }
+                //     )
+                // })
+                var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
+    
+                data.forEach(function(d) {
+                    d['time'] = parseTime(d['Time']);
+                    d['Out_Avg_Temp'] = +d['Outdoor-Avg Temp'];
+                    d['Out_Avg_RH'] = +d['Outdoor-Avg RH'];
+                    d['In_Avg_Temp'] = +d['Indoor-Avg Temp'];
+                    d['In_Avg_RH'] = +d['Indoor-Avg RH'];
+                    d['In_Avg_CO2'] = +d['Indoor-Avg CO2'];
+                })
+
+                
+        
+    //             data = data.filter(function(d){
+    //     if(isNaN(d.value)){
+    //         return false;
+    //     }
+    //     d.value = parseInt(d.value, 10);
+    //     return true;
+
+
+
+            console.log(data);
+
+        	//initial var
+        	//width and height
+        	var w = 840;
+        	var h = 300;
+        	var padding = 40;
+          	var marginLeft = 20;
+          	var marginTop = 20;
+            var marginBottom = 20;
+            var marginRight = 20;
+            var scaleRatio = 18;
+
+            var edgeData = {}
+
+            //create SVG1 element -> Indoor & Outdoor relative humidity
+            
+            var svg = d3.select("body") 
+                        .append("svg")
+                        .attr("width", w + marginLeft + marginRight)
+                        .attr("height", (h + marginTop + marginBottom))
+                        .append("g")
+                        .attr("transform","translate("+marginLeft+","+marginTop+")");
+
+         	var xScale = d3.scaleTime()
+         					.range([padding,w-padding*2]);
+
+         	xScale.domain(d3.extent(data, function(d) { return d.time; }))
+         	
+
+         	var yScale = d3.scaleLinear()
+         					.domain([0,100])
+         					.range([h-padding,padding]);
+
+         		
+        	
+
+
+        	//define x axis for svg1
+        	// var xAxis = d3.svg.axis()
+        	// 				  .scale(xScale)
+        	// 				  .orient("bottom")
+        	// 				  .ticks(5);
+
+        	// var yAxis = d3.svg.axis()
+        	// 				  .scale(yScale)
+        	// 				  .orient("left")
+        	// 				  .ticks(5);					
+
+
+        	//create title
+        	svg.selectAll("text")
+        		.data([1])
+        		.enter()
+        		.append("text")
+        		.attr("x",(w-padding)/2)
+        		.attr("y",padding/2)
+        		.text("Indoor_Avg_RH vs Outdoor_Avg_RH")
+        		.attr("font-family","sans-serif")
+        		.attr("text-anchor","middle")
+        		.attr("font-size","15px");
+
+            //create x-axis
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate(0,"+(h-padding)+")")
+               .call(d3.axisBottom(xScale));
+
+            //x axis lable
+            svg.append("text")
+               .attr("class","xlable")
+               .attr("text-anchor","end")
+               .attr("y",h - 50)
+               .attr("x",w - 60)
+               .style("front-size","12")
+               .text("Time (hrs)");
+
+            //create y-axis
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate("+padding+",0)")
+               .call(d3.axisLeft(yScale));
+
+
+            //y axis lable
+            svg.append("text")
+               .attr("class","ylable")
+               .attr("text-anchor","end")
+               .attr("y",60)
+               .attr("x",-50)
+               .attr("transform","rotate(-90)")
+               .style("front-size","12")
+               .text("Relative Humidity (%)");
+        
+
+            console.log('hello');
+
+			//create line chart for indoor and outdoor rh
+			var line_Indoor = d3.line()
+    					.x(function(d) { return xScale(d.time);})
+    					.y(function(d) { return yScale(d.In_Avg_RH);});
+
+    		var line_Outdoor = d3.line()
+    					.x(function(d) {return xScale(d.time);})
+    					.y(function(d) {return yScale(d.Out_Avg_RH);});
+
+
+    		svg.append("path")
+      			  .datum(data)
+			      .attr("fill", "none")
+			      .attr("stroke", "#7FFF00")
+			      .attr("stroke-linejoin", "round")
+			      .attr("stroke-linecap", "round")
+			      .attr("stroke-width", 3)
+			      .attr("d", line_Indoor);
+
+
+			svg.append("path")
+      			  .datum(data)
+      			  .style("stroke-dasharray", ("5, 5"))
+			      .attr("fill", "none")
+			      .attr("stroke", "#7FFF00")
+			      .attr("stroke-linejoin", "round")
+			      .attr("stroke-linecap", "round")
+			      .attr("stroke-width", 3)
+			      .attr("d", line_Outdoor);
+            
+
+
+
+
+
+
+//-----------------------------------------------------------------------
+  	        var svg = d3.select("body") 
+                        .append("svg")
+                        .attr("width", w + marginLeft + marginRight)
+                        .attr("height", (h + marginTop + marginBottom))
+                        .append("g")
+                        .attr("transform","translate("+marginLeft+","+marginTop+")");
+
+            var xScale = d3.scaleTime()
+         					.range([padding,w-padding*2]);
+
+         	xScale.domain(d3.extent(data, function(d) { return d.time; }))
+         	
+
+         	var yScale = d3.scaleLinear()
+         					.domain([0,40])
+         					.range([h-padding,padding]);
+
+  	       //create title
+        	svg.selectAll("text")
+        		.data([1])
+        		.enter()
+        		.append("text")
+        		.attr("x",(w-padding)/2)
+        		.attr("y",padding/2)
+        		.text("Indoor_Avg_Temp vs Outdoor_Avg_Temp")
+        		.attr("font-family","sans-serif")
+        		.attr("text-anchor","middle")
+        		.attr("font-size","15px");
+
+            //create x-axis
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate(0,"+(h-padding)+")")
+               .call(d3.axisBottom(xScale));
+
+            //x axis lable
+            svg.append("text")
+               .attr("class","x lable")
+               .attr("text-anchor","end")
+               .attr("y",h - 50)
+               .attr("x",w - 60)
+               .style("front-size","12")
+               .text("Time (hrs)");
+
+            //create y-axis
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate("+padding+",0)")
+               .call(d3.axisLeft(yScale));
+
+
+            //y axis lable
+            svg.append("text")
+               .attr("class","y lable")
+               .attr("text-anchor","end")
+               .attr("y",60)
+               .attr("x",-50)
+               .attr("transform","rotate(-90)")
+               .style("front-size","12")
+               .text("Relative Humidity (%)");
+        
+
+            console.log('hello');
+
+			//create line chart for indoor and outdoor rh
+			var line_Indoor = d3.line()
+    					.x(function(d) { return xScale(d.time);})
+    					.y(function(d) { return yScale(d.In_Avg_Temp);});
+
+    		var line_Outdoor = d3.line()
+    					.x(function(d) {return xScale(d.time);})
+    					.y(function(d) {return yScale(d.Out_Avg_Temp);});
+
+
+    		svg.append("path")
+      			  .datum(data)
+			      .attr("fill", "none")
+			      .attr("stroke", "#FFFF00")
+			      .attr("stroke-linejoin", "round")
+			      .attr("stroke-linecap", "round")
+			      .attr("stroke-width", 3)
+			      .attr("d", line_Indoor);
+
+
+			svg.append("path")
+      			  .datum(data)
+      			  .style("stroke-dasharray", ("5, 5"))
+			      .attr("fill", "none")
+			      .attr("stroke", "#FFFF00")
+			      .attr("stroke-linejoin", "round")
+			      .attr("stroke-linecap", "round")
+			      .attr("stroke-width", 3)
+			      .attr("d", line_Outdoor);
+
+
+
+            //create legend for negative
+        //     legend = svg.append("g")
+        //                 .attr("class","legend")
+        //                 .attr("height",50)
+        //                 .attr("weight",w+30);
+
+        //     legend.selectAll("circle")
+        //           .data([1])
+        //           .enter()
+        //           .append("circle")
+        //           .attr("r",2)
+        //           .style("stroke","blue")
+        //           .style("fill-opacity","0")
+        //           .attr("cx",(w-45))
+        //           .attr("cy",50);
+
+        //     legend.selectAll("text")
+        //           .data([1])
+        //           .enter()
+        //           .append("text")
+        //           .attr("text-anchor","mid")
+        //           .attr("class","legend")
+        //           .attr("x",w-35)
+        //           .attr("y",50)
+        //           .text("Outdoor");
+
+        //     //create legend for positive
+        //     legend = svg.append("g")
+        //                 .attr("class","legend")
+        //                 .attr("height",50)
+        //                 .attr("weight",w+30);
+
+        //     legend.selectAll("path")
+        //           .data([1])
+        //           .enter()
+        //           .append("path")
+        //           .attr("d",d3.svg.symbol().type('triangle-up').size(5))
+        //           .style("stroke","red")
+        //           .style("fill-opacity","0")
+        //           .attr("transform",function(d) {return 'translate('+(w-45)+','+(70)+')';})
+        //           .attr("cx",(w-45))
+        //           .attr("cy",50);
+
+        //     legend.selectAll("text")
+        //           .data([1])
+        //           .enter()
+        //           .append("text")
+        //           .attr("text-anchor","mid")
+        //           .attr("class","legend")
+        //           .attr("x",w-35)
+        //           .attr("y",70)
+        //           .text("Indoor");
+
+        // //high light certain area
+        // d3.json("data.json", function(data) {
+        //     svg.selectAll("Polygons")
+        //     .data(data.Polygons)
+        //     .enter() 
+        //     .append("polygon")
+        //     .attr("opacity", 0.5)
+        //     .attr("fill", "yellow")
+        //     .attr("points", function(d) {return d.points.map(function(d) {return [xScale(d.x), yScale(d.y)].join(",");}).join(" ");})
+        //     .attr("stroke", "black")
+        //     .attr("strock-width", 3)
+        // })  
+        
+        
+        // var area = svg.append("polygon")
+        //             .attr("points","200,10,250,190,160,210")
+        //             .attr("opacity",0.5)
+        //             .attr("fill","blue")
+        //             .attr("stroke","blue")
+        //             .attr("stroke-width",3)
+
+                   
+        //use jason to read file and visualize
+       
+    });
+        
+
+        </script>
+    </body>
+</html>    
+
+<!-- http://bl.ocks.org/cpbotha/5200394
+http://www.d3noob.org/2014/02/styles-in-d3js.html
+http://bl.ocks.org/arunkjn/5042953 -->
+
+
+<!-- d3.json("polygons.json", function(data) {
+    svg.selectAll("polygon")
+      .data(data.Polygons)
+      .enter().append("polygon")
+      .attr("points",function(d) { 
+            return d.points.map(function(d) { return [scaleX(d.x),scaleY(d.y)].join(","); }).join(" ");})
+        .attr("stroke","black")
+        .attr("stroke-width",2); 
+  }); -->

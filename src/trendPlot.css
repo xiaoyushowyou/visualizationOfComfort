@@ -1,0 +1,18 @@
+body {
+  background: rgba(128, 128, 128, 0.671);
+}
+
+.axis path,
+.axis line {
+fill: none;
+stroke: white;
+chape-rendering: crispEdges;
+}
+
+.axis text {
+	fill: white;
+}
+
+text {
+	fill: white;
+}
