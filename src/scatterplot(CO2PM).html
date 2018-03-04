@@ -159,6 +159,7 @@
 
           var PMHigh = 35;
           var CO2High = 800;
+          
           var inBox = 0;
           var totalData = 0;
 
@@ -229,12 +230,12 @@
         	var xAxis = d3.svg.axis()
         					  .scale(xScale)
         					  .orient("bottom")
-        					  .ticks(5);
+        					  // .ticks(5);
 
         	var yAxis = d3.svg.axis()
         					  .scale(yScale)
         					  .orient("left")
-        					  .ticks(5);					
+        					  // .ticks(5);					
 
 
         	//create title
@@ -254,7 +255,7 @@
           svg.append("text")
             .attr("x",(w-padding)/2)
             .attr("y",h)
-            .text("Occupied Hrs Within IAQ Compiant Zone " + comfPerct+"%")
+            .text("Occupied Hrs Within IAQ Compiant Zone -- " + comfPerct+"%")
             .attr("font-family","sans-serif")
             .attr("text-anchor","middle")
             .attr("font-size","15px")
