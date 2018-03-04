@@ -7,6 +7,7 @@
         <link rel = "stylesheet" href="scatterplot.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/4.0.0/math.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
 
@@ -126,6 +127,8 @@
                     d['CO2_Outdoor'] = (+d['CO2_Outdoor']);
                 })
 
+
+
                 
         
     //             data = data.filter(function(d){
@@ -149,6 +152,24 @@
           var scaleRatio = 18;
 
           var edgeData = {}
+
+          var PMHigh = 35;
+          var CO2High = 800;
+          var inBox = 0;
+          var totalData = 0;
+
+          data.forEach(function(d) {
+            totalData++;
+            if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High) {
+            //if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High && d.PM_Indoor>0 && d.CO2_Indoor>0) {
+                inBox++;
+            }
+          })
+
+          var comfPerct = Math.round(inBox/totalData*100);
+
+          console.log("size "+totalData+"inBox "+inBox + " " + comfPerct);
+
 
             //create SVG1 element
             
@@ -194,7 +215,7 @@
 
             console.log(xScale(100));
 
-            var yScale = d3.scale.log()
+          var yScale = d3.scale.log()
                                 .domain([0.1,1000])
                                 .range([h-padding,padding]);
 
@@ -223,6 +244,17 @@
         		.attr("font-family","sans-serif")
         		.attr("text-anchor","middle")
         		.attr("font-size","15px");
+
+
+            //create percentage
+          svg.append("text")
+            .attr("x",(w-padding)/2)
+            .attr("y",h)
+            .text("Occupied Hrs Within IAQ Compiant Zone " + comfPerct+"%")
+            .attr("font-family","sans-serif")
+            .attr("text-anchor","middle")
+            .attr("font-size","15px")
+            .style("stroke", "Orange");
 
             //create x-axis
             svg.append("g")
@@ -358,33 +390,28 @@
                   .text("Indoor");
 
         //high light certain area
-        // d3.json("data.json", function(data) {
-        //     svg.selectAll("Polygons")
-        //     .data(data.Polygons)
-        //     .enter() 
-        //     .append("polygon")
-        //     .attr("opacity", 0.5)
-        //     .attr("fill", "yellow")
-        //     .attr("points", function(d) {return d.points.map(function(d) {return [xScale(d.x), yScale(d.y)].join(",");}).join(" ");})
-        //     .attr("stroke", "black")
-        //     .attr("strock-width", 3)
-        // })  
+        //For CO2 and PM2.5, the box should be CO2 <= 800, and PM2.5 <= 35
+        d3.json("CO2PM.json", function(data) {
+            svg.selectAll("Polygons")
+            .data(data.Polygons)
+            .enter() 
+            .append("polygon")
+            .attr("opacity", 0.5)
+            .attr("fill", "#e8f6f3")
+            .attr("points", function(d) {return d.points.map(function(d) {return [xScale(d.x), yScale(d.y)].join(",");}).join(" ");})
+            .attr("stroke", "black")
+            .attr("strock-width", 3)
+        })  
         
-        
-        // // var area = svg.append("polygon")
-        //             .attr("points","200,10,250,190,160,210")
-        //             .attr("opacity",0.5)
-        //             .attr("fill","blue")
-        //             .attr("stroke","blue")
-        //             .attr("stroke-width",3)
+      
 
                    
         //use jason to read file and visualize
        
     });
         
+    </script>
 
-        </script>
     </body>
 </html>    
 
