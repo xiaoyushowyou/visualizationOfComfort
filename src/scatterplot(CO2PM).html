@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Test Data Visualization</title>
+        <title>scatterplot(CO2PM)</title>
         <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
         <link rel = "stylesheet" href="scatterplot.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -20,7 +20,7 @@
       }; -->
     
     <body>
-            <nav class="navbar navbar-default">
+             <nav class="navbar navbar-default">
                     <div class="container-fluid">
                       <!-- Brand and toggle get grouped for better mobile display -->
                       <div class="navbar-header">
@@ -36,31 +36,35 @@
                       <!-- Collect the nav links, forms, and other content for toggling -->
                       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                          <li class=""><a href="airQualityTrend.html">AIR QUALITY <span class="sr-only">(current)</span></a></li>
-                          <li><a href="#">Room3</a></li>
+                          <li class=""><a href="scatterplot.html">THERMAL COMFORT (SCATTER) <span class="sr-only">(current)</span></a></li>
+                          <li class=""><a href="scatterplot(CO2PM).html">AIR QUALITY (SCATTER) <span class="sr-only">(current)</span></a></li>
+                          <li class=""><a href="TempHumTrend.html">THERMAL COMFORT (TREND) <span class="sr-only">(current)</span></a></li>
+                          <li class=""><a href="CO2PMTrend.html">AIR QUALITY (TREND) <span class="sr-only">(current)</span></a></li>
+
+                          <!-- <li><a href="#">Room3</a></li> -->
                           <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ROOM<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                              <li><a href="#">Action</a></li>
-                              <li><a href="#">Another action</a></li>
-                              <li><a href="#">Something else here</a></li>
+                              <li><a href="#">ROOM1</a></li>
+                              <li><a href="#">ROOM2</a></li>
+                              <li><a href="#">ROOM3</a></li>
                               <li role="separator" class="divider"></li>
-                              <li><a href="#">Separated link</a></li>
+                              <li><a href="#">Total</a></li>
                               <li role="separator" class="divider"></li>
-                              <li><a href="#">One more separated link</a></li>
+                              <li><a href="#">One Year</a></li>
                             </ul>
                           </li>
                         </ul>
-                        <form class="navbar-form navbar-left">
+                        <!-- <form class="navbar-form navbar-left">
                           <div class="form-group">
                             <input type="text" class="form-control" placeholder="Search">
                           </div>
                           <button type="submit" class="btn btn-default">Submit</button>
-                        </form>
+                        </form> -->
                         <ul class="nav navbar-nav navbar-right">
                           <li><a href="#">Login</a></li>
                           <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MORE <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                               <li><a href="#">Action</a></li>
                               <li><a href="#">Another action</a></li>
