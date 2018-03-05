@@ -2,22 +2,22 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>scatterplot(COMFT)</title>
+        <title>Test Data Visualization</title>
         <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
-        <link rel = "stylesheet" href="../css/scatterplot.css">
+        <link rel = "stylesheet" href="scatterplot.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </head>
 
     <!-- function ( row ) {
-        return !d3.entries(row).some( 
+        return !d3.entries(row).some(
           function( keyValue ) {
             return ( isRequiredKey( keyValue.key ) && isNaN( keyValue.value ) )
           }
         );
       }; -->
-    
+
     <body>
             <nav class="navbar navbar-default">
                     <div class="container-fluid">
@@ -31,39 +31,35 @@
                         </button>
                         <a class="navbar-brand" href="scatterplot.html">i-DRC</a>
                       </div>
-                  
+
                       <!-- Collect the nav links, forms, and other content for toggling -->
                       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                          <li class=""><a href="scatterplot.html">THERMAL COMFORT (SCATTER) <span class="sr-only">(current)</span></a></li>
-                          <li class=""><a href="scatterplot(CO2PM).html">AIR QUALITY (SCATTER) <span class="sr-only">(current)</span></a></li>
-                          <li class=""><a href="TempHumTrend.html">THERMAL COMFORT (TREND) <span class="sr-only">(current)</span></a></li>
-                          <li class=""><a href="CO2PMTrend.html">AIR QUALITY (TREND) <span class="sr-only">(current)</span></a></li>
-
-                          <!-- <li><a href="#">Room3</a></li> -->
+                          <li class=""><a href="airQualityTrend.html">AIR QUALITY <span class="sr-only">(current)</span></a></li>
+                          <li><a href="#">Room3</a></li>
                           <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ROOM<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                              <li><a href="#">ROOM1</a></li>
-                              <li><a href="#">ROOM2</a></li>
-                              <li><a href="#">ROOM3</a></li>
+                              <li><a href="#">Action</a></li>
+                              <li><a href="#">Another action</a></li>
+                              <li><a href="#">Something else here</a></li>
                               <li role="separator" class="divider"></li>
-                              <li><a href="#">Total</a></li>
+                              <li><a href="#">Separated link</a></li>
                               <li role="separator" class="divider"></li>
-                              <li><a href="#">One Year</a></li>
+                              <li><a href="#">One more separated link</a></li>
                             </ul>
                           </li>
                         </ul>
-                        <!-- <form class="navbar-form navbar-left">
+                        <form class="navbar-form navbar-left">
                           <div class="form-group">
                             <input type="text" class="form-control" placeholder="Search">
                           </div>
                           <button type="submit" class="btn btn-default">Submit</button>
-                        </form> -->
+                        </form>
                         <ul class="nav navbar-nav navbar-right">
                           <li><a href="#">Login</a></li>
                           <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MORE <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                               <li><a href="#">Action</a></li>
                               <li><a href="#">Another action</a></li>
@@ -84,7 +80,7 @@
                 //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
                 //         return false;
                 //     }
-                    
+
                 // }
 
 
@@ -103,8 +99,10 @@
                     d['In_RH'] = (+d['In_RH'])*0.78;
                 })
 
-                
-        
+
+
+
+
     //             data = data.filter(function(d){
     //     if(isNaN(d.value)){
     //         return false;
@@ -130,8 +128,8 @@
           var edgeData = {}
 
             //create SVG1 element
-            
-            var svg = d3.select("body") 
+
+            var svg = d3.select("body")
                         .append("svg")
                         .attr("width", w + marginLeft + marginRight)
                         .attr("height", (h + marginTop + marginBottom))
@@ -188,7 +186,7 @@
         	var yAxis = d3.svg.axis()
         					  .scale(yScale)
         					  .orient("left")
-        					  .ticks(5);					
+        					  .ticks(5);
 
 
         	//create title
@@ -204,43 +202,48 @@
         		.attr("font-size","15px");
 
             //create x-axis
-            // svg.append("g")
-            //    .attr("class","axis")
-            //    .attr("transform","translate(0,"+(h-padding)+")")
-            //    .call(xAxis);
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate(0,"+(h-padding)+")")
+               .call(xAxis);
 
-            // //x axis lable
-            // svg.append("text")
-            //    .attr("class","x lable")
-            //    .attr("text-anchor","end")
-            //    .attr("y",h - 50)
-            //    .attr("x",w - 60)
-            //    .style("front-size","12")
-            //    .text("Dry-Bulb Temperature (C)");
+            //x axis lable
+            svg.append("text")
+               .attr("class","x lable")
+               .attr("text-anchor","end")
+               .attr("y",h - 50)
+               .attr("x",w - 60)
+               .style("front-size","12")
+               .text("Dry-Bulb Temperature (C)");
 
-            // //create y-axis
-            // svg.append("g")
-            //    .attr("class","axis")
-            //    .attr("transform","translate("+padding+",0)")
-            //    .call(yAxis);
+            //create y-axis
+            svg.append("g")
+               .attr("class","axis")
+               .attr("transform","translate("+padding+",0)")
+               .call(yAxis);
 
 
-            // //y axis lable
-            // svg.append("text")
-            //    .attr("class","y lable")
-            //    .attr("text-anchor","end")
-            //    .attr("y",60)
-            //    .attr("x",-50)
-            //    .attr("transform","rotate(-90)")
-            //    .style("front-size","12")
-            //    .text("Humidity Ratio (gm Water / gm of Dry Air)");
-        
+            //y axis lable
+            svg.append("text")
+               .attr("class","y lable")
+               .attr("text-anchor","end")
+               .attr("y",60)
+               .attr("x",-50)
+               .attr("transform","rotate(-90)")
+               .style("front-size","12")
+               .text("Humidity Ratio (gm Water / gm of Dry Air)");
+
 
             console.log('hello');
 
             //bluecircle for outdoor
             //redtriangular for positive
         	//create circles
+
+          var mini = svg.selectAll(".outDoorData")
+        	   .data(data).enter().size()
+          console.log(mini)
+
         	svg.selectAll(".outDoorData")
         	   .data(data)
                 // .data(data.filter(function(d) {return d['class'] === 0}))
@@ -257,7 +260,7 @@
                .style("stroke",'blue')
                .style("fill-opacity",'0');
 
-            
+
 
             //create indoordata
             svg.selectAll(".inDoorData")
@@ -282,6 +285,13 @@
                 // .attr("transform",function(d) {return 'translate('+xScale(d['plasma_glucose'])+','+yScale(d['insulin'])+')';})
                 // .style('stroke','red')
                 // .style('fill-opacity','0');
+                //.data(data.filter(function(d) {return d['class'] == 1}))
+
+              var mysize = svg.selectAll(".outDoorData")
+                    .data(data)
+                    .filter(function(d) {return d.In_RH<0.015 && d.In_RH>0.005 && d.In_Avg_Temp<25 && d.In_Avg_Temp>15})
+                    .size()
+              console.log(mysize)
 
             //create legend for negative
             legend = svg.append("g")
@@ -340,32 +350,18 @@
         d3.json("data.json", function(data) {
             svg.selectAll("Polygons")
             .data(data.Polygons)
-            .enter() 
+            .enter()
             .append("polygon")
             .attr("opacity", 0.5)
             .attr("fill", "yellow")
             .attr("points", function(d) {return d.points.map(function(d) {return [xScale(d.x), yScale(d.y)].join(",");}).join(" ");})
             .attr("stroke", "black")
             .attr("strock-width", 3)
-        })  
-        
-        
-        // var area = svg.append("polygon")
-        //             .attr("points","200,10,250,190,160,210")
-        //             .attr("opacity",0.5)
-        //             .attr("fill","blue")
-        //             .attr("stroke","blue")
-        //             .attr("stroke-width",3)
+        })
 
-                   
-        //use jason to read file and visualize
-
-
-      // Calculate the percentage of points that lay into the safety zone
-
-      var indoorinBox = 0;
-      var totalData = 0;
-      var points = [
+        var indoorinBox = 0;
+        var totalData = 0;
+        var points = [
             {"x":20.0, "y":0.01},
             {"x":20.0,"y":0.020},
             {"x":22.7,"y":0.020},
@@ -417,25 +413,24 @@
           //  }
           })
           var indoor_comfPerct = Math.round(indoorinBox/totalData*100);
-          console.log("The percent is", indoor_comfPerct);
+          console.log(indoor_comfPerct);
+        // var area = svg.append("polygon")
+        //             .attr("points","200,10,250,190,160,210")
+        //             .attr("opacity",0.5)
+        //             .attr("fill","blue")
+        //             .attr("stroke","blue")
+        //             .attr("stroke-width",3)
 
 
-          //create percentage
-          svg.append("text")
-            .attr("x",(w-padding)/2)
-            .attr("y",h)
-            .text("Occupied Hrs Within IAQ Compiant Zone -- " + indoor_comfPerct+"%")
-            .attr("font-family","sans-serif")
-            .attr("text-anchor","middle")
-            .attr("font-size","15px")
-            .style("stroke", "Orange");
-       
+        //use jason to read file and visualize
+
     });
-        
+
+
 
         </script>
     </body>
-</html>    
+</html>
 
 <!-- http://bl.ocks.org/cpbotha/5200394
 http://www.d3noob.org/2014/02/styles-in-d3js.html
@@ -446,8 +441,8 @@ http://bl.ocks.org/arunkjn/5042953 -->
     svg.selectAll("polygon")
       .data(data.Polygons)
       .enter().append("polygon")
-      .attr("points",function(d) { 
+      .attr("points",function(d) {
             return d.points.map(function(d) { return [scaleX(d.x),scaleY(d.y)].join(","); }).join(" ");})
         .attr("stroke","black")
-        .attr("stroke-width",2); 
+        .attr("stroke-width",2);
   }); -->
