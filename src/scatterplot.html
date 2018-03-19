@@ -77,8 +77,75 @@
                     </div><!-- /.container-fluid -->
                   </nav>
 
+        <!-- <p><input type="checkbox" class = "myCheckBox" value="Indoor">Indoor  <span>&nbsp</span> <input type="checkbox" class = "myCheckBox" value="Outdoor">Outdoor</p> -->
+        <p><input type="checkbox" class = "myCheckBox" value="DayTime">DayTime  <span>&nbsp</span> <input type="checkbox" class = "myCheckBox" value="NightTime">NightTime</p>
+
+        <form>
+                <lable for = "month">MONTH:</lable>
+                <select id = "month"></select>
+        </form>
+
+
+        <div id="content"></div>
+
+        <!-- <form> -->
+     <!--      <label for = "type">Type:</label>
+          <select id = "type">Type</select>
+        </form> -->
+        
+        <!-- <dir>   
+            <form>Month
+            <select id="time">
+            <option value=0 selected="selected">All</option>
+            <option value=1>Jan</option>
+            <option value=2>Feb</option>
+            <option value=3>Mar</option>
+            <option value=4>Apr</option>
+            <option value=5>May</option>
+            <option value=6>Jun</option>
+            <option value=7>Jul</option>
+            <option value=8>Aug</option>
+            <option value=9>Sep</option>
+            <option value=10>Oct</option>
+            </select>
+            </form>
+      </dir> -->
+
+
         <script type="text/javascript">
-            d3.csv("plot_data_1000.csv", function(data) {
+            d3.selectAll('.myCheckBox').attr('checked','true');
+
+            d3.csv("Fuxing_lu_2017_modified.csv", function(data) {
+              d3.csv("FXL_Outdoor_Data.csv", function(data2) {
+            
+
+            // d3.selectAll("myCheckBox").on("change", update);
+
+            var month_elements = ["All","1","2","3","4","5","6","7","8","9","10","11","12"];
+
+            d3.selectAll(".myCheckBox").on("change",onchange);
+
+            // d3.select("#type")
+            //   .on("change", onchange)
+            //   .selectAll("checkbox")
+            //   .data(type_elements)
+            //   .enter()
+            //   .append("checkbox")
+            //   .attr("value", function(d){return d;})
+            //   .text(function(d) {return d;})
+
+            d3.select("#month")
+                .on("change", onchange)
+                .selectAll("option")
+                .data(month_elements)
+                .enter()
+                .append("option")
+                .attr("value", function(d) { return d; })
+                .text(function(d) { return d; });
+
+
+
+
             //d3.csv("Outdoor+ Indoor AVG TEMP-RH-CO2_2015-2017_15mins.csv", function(data) {
                 // data.filter(function(d)) {
                 //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
@@ -96,13 +163,17 @@
                 //         }
                 //     )
                 // })
-                data.forEach(function(d) {
-                    d['Out_Avg_Temp'] = +d['Out_Avg_Temp'];
-                    d['Out_RH'] = (+d['Out_RH'])*0.78;
-                    d['In_Avg_Temp'] = +d['In_Avg_Temp'];
-                    d['In_RH'] = (+d['In_RH'])*0.78;
-                })
+                var myFormat = d3.time.format("%m/%d/%y %H:%M");
 
+                data.forEach(function(d) {
+                    // d['Out_Avg_Temp'] = +d['Out_Avg_Temp'];
+                    // d['Out_RH'] = (+d['Out_RH'])*0.78;
+                    d['In_Avg_Temp'] = +d['temperature'];
+                    d['In_RH'] = (+d['ah'])*0.78;
+                    d['hour'] = +d['hour'];
+                    d['Month'] = +d['month'];
+                    d['time'] = myFormat.parse(d['ts']);
+                })
                 
         
     //             data = data.filter(function(d){
@@ -114,8 +185,7 @@
 
 
 
-            console.log(data);
-
+          console.log(data);
         	//initial var
         	//width and height
         	var w = 840;
@@ -203,78 +273,200 @@
         		.attr("text-anchor","middle")
         		.attr("font-size","15px");
 
-            //create x-axis
-            svg.append("g")
-               .attr("class","axis")
-               .attr("transform","translate(0,"+(h-padding)+")")
-               .call(xAxis);
 
-            //x axis lable
-            svg.append("text")
-               .attr("class","x lable")
-               .attr("text-anchor","end")
-               .attr("y",h - 50)
-               .attr("x",w - 60)
-               .style("front-size","12")
-               .text("Dry-Bulb Temperature (C)");
+         var monthValue = "All";
+         onchange();
 
-            //create y-axis
-            svg.append("g")
-               .attr("class","axis")
-               .attr("transform","translate("+padding+",0)")
-               .call(yAxis);
+         function onchange() {
+            monthValue = d3.select('select')
+                            .property('value')
+        
+            showCase = [];
+
+            d3.selectAll(".myCheckBox").each(function(d) {
+                cd = d3.select(this)
+                if (cd.property("checked")) {
+                  showCase.push(cd.property("value"))
+                }
+              }
+            )
+
+            console.log(monthValue);
+
+            console.log(showCase);
+
+            //update the data based on month
+
+            myData = [];
+
+            if (monthValue == "All") {
+              data.forEach(function(d) {
+                myData.push(d);
+              })
+            }
+
+            else 
+            { 
+              console.log(+monthValue)
+              data.forEach(function(d) {
+                if (d.Month == +monthValue) {
+                    myData.push(d);
+                }
+              })
+            };
+
+            redraw();       
+        };
 
 
-            //y axis lable
-            svg.append("text")
-               .attr("class","y lable")
-               .attr("text-anchor","end")
-               .attr("y",60)
-               .attr("x",-50)
-               .attr("transform","rotate(-90)")
-               .style("front-size","12")
-               .text("Humidity Ratio (gm Water / gm of Dry Air)");
+        function redraw() {
+
+          svg.selectAll(".inDoorData").remove();
+
+          if (showCase.includes("DayTime")) {
+              svg.selectAll(".inDoorData")
+                  //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","inDoorData")
+                 .attr("cx",function(d){
+                  return xScale(d['In_Avg_Temp']);
+               })
+                 .attr("cy",function(d){
+                     return yScale(d['In_RH']*0.903);
+                 })
+               .attr("r",0.7)
+                 .style("stroke",'blue')
+                 .style("fill-opacity",'0');
+              }
+
+
+              //create indoordata nighttime
+            if (showCase.includes("NightTime")) {
+              svg.selectAll(".inDoorData")
+                  //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","inDoorData")
+                 .attr("cx",function(d){
+                  return xScale(d['In_Avg_Temp']);
+               })
+                 .attr("cy",function(d){
+                     return yScale(d['In_RH']*0.903);
+                 })
+               .attr("r",0.7)
+                 .style("stroke",'red')
+                 .style("fill-opacity",'0');
+              }
+        }
+
+        
+
+
+            // //create x-axis
+            // svg.append("g")
+            //    .attr("class","axis")
+            //    .attr("transform","translate(0,"+(h-padding)+")")
+            //    .call(xAxis);
+
+            // //x axis lable
+            // svg.append("text")
+            //    .attr("class","x lable")
+            //    .attr("text-anchor","end")
+            //    .attr("y",h - 50)
+            //    .attr("x",w - 60)
+            //    .style("front-size","12")
+            //    .text("Dry-Bulb Temperature (C)");
+
+            // //create y-axis
+            // svg.append("g")
+            //    .attr("class","axis")
+            //    .attr("transform","translate("+padding+",0)")
+            //    .call(yAxis);
+
+
+            // //y axis lable
+            // svg.append("text")
+            //    .attr("class","y lable")
+            //    .attr("text-anchor","end")
+            //    .attr("y",60)
+            //    .attr("x",-50)
+            //    .attr("transform","rotate(-90)")
+            //    .style("front-size","12")
+            //    .text("Humidity Ratio (gm Water / gm of Dry Air)");
         
 
             console.log('hello');
 
+
             //bluecircle for outdoor
             //redtriangular for positive
-        	//create circles
-        	svg.selectAll(".outDoorData")
-        	   .data(data)
-                // .data(data.filter(function(d) {return d['class'] === 0}))
-        	   .enter()
-        	   .append("circle")
-               .attr("class","outDoorData")
-               .attr("cx",function(d){
-        	   		return xScale(d['Out_Avg_Temp']);
-        	   })
-               .attr("cy",function(d){
-                   return yScale(d['Out_RH']*0.903);
-               })
-        	   .attr("r",0.1)
-               .style("stroke",'blue')
-               .style("fill-opacity",'0');
+          //create circles
+          // svg.selectAll(".outDoorData")
+          //    .data(data)
+         //        // .data(data.filter(function(d) {return d['class'] === 0}))
+          //    .enter()
+          //    .append("circle")
+         //       .attr("class","outDoorData")
+         //       .attr("cx",function(d){
+          //        return xScale(d['Out_Avg_Temp']);
+          //    })
+         //       .attr("cy",function(d){
+         //           return yScale(d['Out_RH']*0.903);
+         //       })
+          //    .attr("r",0.1)
+         //       .style("stroke",'blue')
+         //       .style("fill-opacity",'0');
 
             
 
-            //create indoordata
-            svg.selectAll(".inDoorData")
-                //.data(data.filter(function(d) {return d['class'] == 1}))
-                .data(data)
-                .enter()
-                .append("circle")
-               .attr("class","inDoorData")
-               .attr("cx",function(d){
-        	   		return xScale(d['In_Avg_Temp']);
-        	   })
-               .attr("cy",function(d){
-                   return yScale(d['In_RH']*0.903);
-               })
-        	   .attr("r",0.1)
-               .style("stroke",'red')
-               .style("fill-opacity",'0');
+            //create indoordata daytime
+            
+  
+
+            //create indoordata nighttime
+
+
+
+         //    //bluecircle for outdoor
+         //    //redtriangular for positive
+        	// //create circles
+        	// // svg.selectAll(".outDoorData")
+        	// //    .data(data)
+         // //        // .data(data.filter(function(d) {return d['class'] === 0}))
+        	// //    .enter()
+        	// //    .append("circle")
+         // //       .attr("class","outDoorData")
+         // //       .attr("cx",function(d){
+        	// //    		return xScale(d['Out_Avg_Temp']);
+        	// //    })
+         // //       .attr("cy",function(d){
+         // //           return yScale(d['Out_RH']*0.903);
+         // //       })
+        	// //    .attr("r",0.1)
+         // //       .style("stroke",'blue')
+         // //       .style("fill-opacity",'0');
+
+            
+
+         //    //create indoordata
+         //    svg.selectAll(".inDoorData")
+         //        //.data(data.filter(function(d) {return d['class'] == 1}))
+         //        .data(data)
+         //        .enter()
+         //        .append("circle")
+         //       .attr("class","inDoorData")
+         //       .attr("cx",function(d){
+        	//    		return xScale(d['In_Avg_Temp']);
+        	//    })
+         //       .attr("cy",function(d){
+         //           return yScale(d['In_RH']*0.903);
+         //       })
+        	//    .attr("r",0.7)
+         //       .style("stroke",'red')
+         //       .style("fill-opacity",'0');
 
                 // .append("path")
                 // .attr("d",d3.svg.symbol().type('triangle-up').size(5))
@@ -307,7 +499,7 @@
                   .attr("class","legend")
                   .attr("x",w-35)
                   .attr("y",50)
-                  .text("Outdoor");
+                  .text("DayTime");
 
             //create legend for positive
             legend = svg.append("g")
@@ -322,8 +514,8 @@
                   .attr("d",d3.svg.symbol().type('triangle-up').size(5))
                   .style("stroke","red")
                   .style("fill-opacity","0")
-                  .attr("transform",function(d) {return 'translate('+(w-45)+','+(70)+')';})
-                  .attr("cx",(w-45))
+                  .attr("transform",function(d) {return 'translate('+(w-48)+','+(70)+')';})
+                  .attr("cx",(w-48))
                   .attr("cy",50);
 
             legend.selectAll("text")
@@ -332,9 +524,9 @@
                   .append("text")
                   .attr("text-anchor","mid")
                   .attr("class","legend")
-                  .attr("x",w-35)
+                  .attr("x",w-45)
                   .attr("y",70)
-                  .text("Indoor");
+                  .text("NightTime");
 
         //high light certain area
         d3.json("data.json", function(data) {
@@ -359,9 +551,9 @@
 
                    
         //use jason to read file and visualize
-       
+      })
     });
-        
+
 
         </script>
     </body>

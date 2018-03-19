@@ -78,7 +78,7 @@
                   </nav>
 
         <script type="text/javascript">
-            d3.csv("CO2PM(OneDay).csv", function(data) {
+            d3.csv("Fuxing_lu_2017_oneDay.csv", function(data) {
             //d3.csv("Outdoor+ Indoor AVG TEMP-RH-CO2_2015-2017_15mins.csv", function(data) {
                 // data.filter(function(d)) {
                 //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
@@ -96,13 +96,14 @@
                 //         }
                 //     )
                 // })
-                var parseTime = d3.timeParse("%H");
+
+                var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
     
                 data.forEach(function(d) {
-                    d['time'] = parseTime(d['Hour']);
-                    d['CO2_Indoor'] = +d['CO2_Indoor'];
+                    d['time'] = parseTime(d['ts']);
+                    d['CO2_Indoor'] = +d['co2'];
                     d['CO2_Outdoor'] = +d['CO2_Outdoor'];
-                    d['PM_Indoor'] = +d['PM_Indoor'];
+                    d['PM_Indoor'] = +d['pm25'];
                     d['PM_Outdoor'] = +d['PM_Outdoor'];
                 })
 
@@ -227,9 +228,9 @@
     					.x(function(d) { return xScale(d.time);})
     					.y(function(d) { return yScale(d.PM_Indoor);});
 
-    		var line_Outdoor = d3.line()
-    					.x(function(d) {return xScale(d.time);})
-    					.y(function(d) {return yScale(d.PM_Outdoor);});
+    		// var line_Outdoor = d3.line()
+    		// 			.x(function(d) {return xScale(d.time);})
+    		// 			.y(function(d) {return yScale(d.PM_Outdoor);});
 
 
     		svg.append("path")
@@ -242,15 +243,15 @@
 			      .attr("d", line_Indoor);
 
 
-			svg.append("path")
-      			  .datum(data)
-      			  .style("stroke-dasharray", ("5, 5"))
-			      .attr("fill", "none")
-			      .attr("stroke", "#7FFF00")
-			      .attr("stroke-linejoin", "round")
-			      .attr("stroke-linecap", "round")
-			      .attr("stroke-width", 3)
-			      .attr("d", line_Outdoor);
+			// svg.append("path")
+   //    			  .datum(data)
+   //    			  .style("stroke-dasharray", ("5, 5"))
+			//       .attr("fill", "none")
+			//       .attr("stroke", "#7FFF00")
+			//       .attr("stroke-linejoin", "round")
+			//       .attr("stroke-linecap", "round")
+			//       .attr("stroke-width", 3)
+			//       .attr("d", line_Outdoor);
             
 
 
@@ -341,7 +342,7 @@
          	
 
          	var yScale = d3.scaleLinear()
-         					.domain([350,450])
+         					.domain([450,2000])
          					.range([h-padding,padding]);
 
   	       //create title
@@ -386,7 +387,7 @@
                .attr("x",-50)
                .attr("transform","rotate(-90)")
                .style("front-size","12")
-               .text("Relative Humidity (%)");
+               .text("CO2 Concentration (ppm)");
         
 
             console.log('hello');

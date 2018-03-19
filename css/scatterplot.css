@@ -19,6 +19,9 @@ text {
 
 body {
   background: rgba(128, 128, 128, 0.671);
+  margin-left: 40px;
+  padding-left: 60px;
+  padding-right: 60px;
 }
 
 .axis path,

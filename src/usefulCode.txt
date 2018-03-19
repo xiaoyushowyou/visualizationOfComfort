@@ -1,0 +1,1 @@
+cat FXL_2017_Outdoor_Pollutants_Hourly_Gams.csv | grep -v ,, > test.csv

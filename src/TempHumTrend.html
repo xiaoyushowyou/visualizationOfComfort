@@ -78,7 +78,7 @@
                   </nav>
 
         <script type="text/javascript">
-            d3.csv("oneDayData.csv", function(data) {
+            d3.csv("Fuxing_lu_2017_oneDay.csv", function(data) {
             //d3.csv("Outdoor+ Indoor AVG TEMP-RH-CO2_2015-2017_15mins.csv", function(data) {
                 // data.filter(function(d)) {
                 //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
@@ -99,11 +99,11 @@
                 var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
     
                 data.forEach(function(d) {
-                    d['time'] = parseTime(d['Time']);
+                    d['time'] = parseTime(d['ts']);
                     d['Out_Avg_Temp'] = +d['Outdoor-Avg Temp'];
                     d['Out_Avg_RH'] = +d['Outdoor-Avg RH'];
-                    d['In_Avg_Temp'] = +d['Indoor-Avg Temp'];
-                    d['In_Avg_RH'] = +d['Indoor-Avg RH'];
+                    d['In_Avg_Temp'] = +d['temperature'];
+                    d['In_Avg_RH'] = +d['humidity'];
                     d['In_Avg_CO2'] = +d['Indoor-Avg CO2'];
                 })
 
@@ -380,7 +380,7 @@
                .attr("x",-50)
                .attr("transform","rotate(-90)")
                .style("front-size","12")
-               .text("Relative Humidity (%)");
+               .text("Temperature (C)");
         
 
             console.log('hello');
