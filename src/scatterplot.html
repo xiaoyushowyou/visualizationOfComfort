@@ -78,11 +78,17 @@
                   </nav>
 
         <!-- <p><input type="checkbox" class = "myCheckBox" value="Indoor">Indoor  <span>&nbsp</span> <input type="checkbox" class = "myCheckBox" value="Outdoor">Outdoor</p> -->
+        <p><input type="checkbox" class = "myCheckBox" value="Indoor">Indoor  <span>&nbsp</span> <input type="checkbox" class = "myCheckBox" value="Outdoor">Outdoor</p>
         <p><input type="checkbox" class = "myCheckBox" value="DayTime">DayTime  <span>&nbsp</span> <input type="checkbox" class = "myCheckBox" value="NightTime">NightTime</p>
 
-        <form>
+        <!-- <form>
                 <lable for = "month">MONTH:</lable>
                 <select id = "month"></select>
+        </form> -->
+
+        <form>
+               <!--  <lable for = "month">MONTH:</lable> -->
+                <div id = "month2">MONTH:  </div>
         </form>
 
 
@@ -116,7 +122,7 @@
             d3.selectAll('.myCheckBox').attr('checked','true');
 
             d3.csv("Fuxing_lu_2017_modified.csv", function(data) {
-              d3.csv("FXL_Outdoor_Data.csv", function(data2) {
+              d3.csv("weather_outside.csv", function(data_outDoor) {
             
 
             // d3.selectAll("myCheckBox").on("change", update);
@@ -124,6 +130,7 @@
             var month_elements = ["All","1","2","3","4","5","6","7","8","9","10","11","12"];
 
             d3.selectAll(".myCheckBox").on("change",onchange);
+
 
             // d3.select("#type")
             //   .on("change", onchange)
@@ -134,14 +141,34 @@
             //   .attr("value", function(d){return d;})
             //   .text(function(d) {return d;})
 
-            d3.select("#month")
-                .on("change", onchange)
-                .selectAll("option")
-                .data(month_elements)
-                .enter()
-                .append("option")
-                .attr("value", function(d) { return d; })
-                .text(function(d) { return d; });
+
+
+            // d3.select("#month")
+            //     .on("change", onchange)
+            //     .selectAll("option")
+            //     .data(month_elements)
+            //     .enter()
+            //     .append("option")
+            //     .attr("value", function(d) { return d; })
+            //     .text(function(d) { return d; });
+
+
+            d3.select("#month2").selectAll("input")
+              .on("change", onchange)
+              .data(month_elements)
+              .enter()
+              .append('label')
+                  .attr('for',function(d){ return d; })
+                  .text(function(d) { return '\u00A0' + d; })
+              .append("input")
+                  .property("checked", false)
+                  .attr("type", "checkbox")
+                  .attr("class", "monthCheckBox")
+                  .attr("value", function(d) {return d;})
+          
+            d3.selectAll(".monthCheckBox").on("change",onchange);
+
+
 
 
 
@@ -171,10 +198,21 @@
                     d['In_Avg_Temp'] = +d['temperature'];
                     d['In_RH'] = (+d['ah'])*0.78;
                     d['hour'] = +d['hour'];
-                    d['Month'] = +d['month'];
+                    d['Month'] = d['month'];
                     d['time'] = myFormat.parse(d['ts']);
                 })
                 
+
+
+                data_outDoor.forEach(function(d) {
+                    // d['Out_Avg_Temp'] = +d['Out_Avg_Temp'];
+                    // d['Out_RH'] = (+d['Out_RH'])*0.78;
+                    d['temp_outDoor'] = +d['DBT'];
+                    d['ah_outDoor'] = (+d['RH'])*0.78;
+                    d['time'] = myFormat.parse(d['time_weather']);
+                    d['Month'] = (myFormat.parse(d['time_weather'])).getMonth();
+                    d['hour'] = myFormat.parse(d['time_weather']).getHours();
+                })
         
     //             data = data.filter(function(d){
     //     if(isNaN(d.value)){
@@ -186,6 +224,8 @@
 
 
           console.log(data);
+          console.log(data_outDoor);
+
         	//initial var
         	//width and height
         	var w = 840;
@@ -278,11 +318,24 @@
          onchange();
 
          function onchange() {
-            monthValue = d3.select('select')
-                            .property('value')
+            // monthValue = d3.select('select')
+            //                 .property('value')
+
+            monthValue = []
+
+            d3.selectAll(".monthCheckBox").each(function(d) {
+              cd = d3.select(this)
+              if (cd.property("checked")) {
+                monthValue.push(cd.property("value"))
+              }
+            })
+
         
             showCase = [];
 
+
+            console.log("start point")
+            // data for indoor
             d3.selectAll(".myCheckBox").each(function(d) {
                 cd = d3.select(this)
                 if (cd.property("checked")) {
@@ -292,37 +345,68 @@
             )
 
             console.log(monthValue);
-
             console.log(showCase);
 
-            //update the data based on month
 
+            //update the indoor data based on month
             myData = [];
 
-            if (monthValue == "All") {
-              data.forEach(function(d) {
-                myData.push(d);
-              })
+            if (showCase.includes("Indoor")) {
+              if (monthValue.includes("All")) {
+                data.forEach(function(d) {
+                  myData.push(d);
+                })
+              }
+
+              else 
+              { 
+                // console.log(+monthValue)            
+                  data.forEach(function(d) {
+                    if (monthValue.includes(d.Month)) {
+                        myData.push(d);
+                    }
+                  })
+                }           
             }
 
-            else 
-            { 
-              console.log(+monthValue)
-              data.forEach(function(d) {
-                if (d.Month == +monthValue) {
-                    myData.push(d);
-                }
-              })
-            };
 
-            redraw();       
-        };
+
+
+            //------------------------------------------//
+            // data for outdoor
+            myData_outDoor = [];
+
+
+            if (showCase.includes("Outdoor")) {
+                if (monthValue == "All") {
+                  data_outDoor.forEach(function(d) {
+                    myData_outDoor.push(d);
+                  })
+                }
+
+                else 
+                { 
+                  console.log(+monthValue)
+                  data_outDoor.forEach(function(d) {
+                    if (d.Month == +monthValue) {
+                        myData_outDoor.push(d);
+                    }
+                  })
+                };
+
+                redraw();       
+            }};
+
+
 
 
         function redraw() {
 
           svg.selectAll(".inDoorData").remove();
+          svg.selectAll(".outDoorData").remove();
 
+
+          // indoor daytime data
           if (showCase.includes("DayTime")) {
               svg.selectAll(".inDoorData")
                   //.data(data.filter(function(d) {return d['class'] == 1}))
@@ -342,7 +426,7 @@
               }
 
 
-              //create indoordata nighttime
+            //create indoordata nighttime
             if (showCase.includes("NightTime")) {
               svg.selectAll(".inDoorData")
                   //.data(data.filter(function(d) {return d['class'] == 1}))
@@ -360,6 +444,52 @@
                  .style("stroke",'red')
                  .style("fill-opacity",'0');
               }
+
+
+
+
+//-----------------------------------------------------------------------------------------------
+              //outdoor daytime data
+              if (showCase.includes("DayTime")) {
+              svg.selectAll(".outDoorData")
+                  //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData_outDoor.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","outDoorData")
+                 .attr("cx",function(d){
+                  return xScale(d['temp_outDoor']);
+               })
+                 .attr("cy",function(d){
+                     return yScale(d['ah_outDoor']*0.903);
+                 })
+               .attr("r",0.7)
+                 .style("stroke",'blue')
+                 .style("fill-opacity",'0.5');
+              }
+
+
+              //create outdoor nighttime
+            if (showCase.includes("NightTime")) {
+              svg.selectAll(".outDoorData")
+                  //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData_outDoor.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","outDoorData")
+                 .attr("cx",function(d){
+                  return xScale(d['temp_outDoor']);
+               })
+                 .attr("cy",function(d){
+                     return yScale(d['ah_outDoor']*0.903);
+                 })
+               .attr("r",0.7)
+                 .style("stroke",'red')
+                 .style("fill-opacity",'0.5');
+              }
+
+
+
         }
 
         

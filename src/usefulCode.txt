@@ -1,1 +1,2 @@
 cat FXL_2017_Outdoor_Pollutants_Hourly_Gams.csv | grep -v ,, > test.csv
+cat weather_outside.csv  air_outside.csv > FXL_Outdoor_Data.csv
