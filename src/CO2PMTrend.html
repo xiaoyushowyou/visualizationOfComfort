@@ -96,14 +96,13 @@
                 //         }
                 //     )
                 // })
-
-                var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
+                var parseTime = d3.timeParse("%H");
     
                 data.forEach(function(d) {
-                    d['time'] = parseTime(d['ts']);
-                    d['CO2_Indoor'] = +d['co2'];
+                    d['time'] = parseTime(d['Hour']);
+                    d['CO2_Indoor'] = +d['CO2_Indoor'];
                     d['CO2_Outdoor'] = +d['CO2_Outdoor'];
-                    d['PM_Indoor'] = +d['pm25'];
+                    d['PM_Indoor'] = +d['PM_Indoor'];
                     d['PM_Outdoor'] = +d['PM_Outdoor'];
                 })
 
@@ -228,9 +227,9 @@
     					.x(function(d) { return xScale(d.time);})
     					.y(function(d) { return yScale(d.PM_Indoor);});
 
-    		// var line_Outdoor = d3.line()
-    		// 			.x(function(d) {return xScale(d.time);})
-    		// 			.y(function(d) {return yScale(d.PM_Outdoor);});
+    		var line_Outdoor = d3.line()
+    					.x(function(d) {return xScale(d.time);})
+    					.y(function(d) {return yScale(d.PM_Outdoor);});
 
 
     		svg.append("path")
@@ -243,15 +242,15 @@
 			      .attr("d", line_Indoor);
 
 
-			// svg.append("path")
-   //    			  .datum(data)
-   //    			  .style("stroke-dasharray", ("5, 5"))
-			//       .attr("fill", "none")
-			//       .attr("stroke", "#7FFF00")
-			//       .attr("stroke-linejoin", "round")
-			//       .attr("stroke-linecap", "round")
-			//       .attr("stroke-width", 3)
-			//       .attr("d", line_Outdoor);
+			svg.append("path")
+      			  .datum(data)
+      			  .style("stroke-dasharray", ("5, 5"))
+			      .attr("fill", "none")
+			      .attr("stroke", "#7FFF00")
+			      .attr("stroke-linejoin", "round")
+			      .attr("stroke-linecap", "round")
+			      .attr("stroke-width", 3)
+			      .attr("d", line_Outdoor);
             
 
 
@@ -342,7 +341,7 @@
          	
 
          	var yScale = d3.scaleLinear()
-         					.domain([450,2000])
+         					.domain([350,2100])
          					.range([h-padding,padding]);
 
   	       //create title

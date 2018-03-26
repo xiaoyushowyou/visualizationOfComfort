@@ -96,6 +96,9 @@
         <div id="content"></div>
 
         <script type="text/javascript">
+
+
+
           d3.selectAll('.myCheckBox').attr('checked','true');
 
 
@@ -189,8 +192,10 @@
                 data2.forEach(function(d) {
                     d['PM_Outdoor'] = +d['pm25'];
                     d['CO2_Outdoor'] = +d['co2'];
+                    d['O3_Outdoor'] = +d['o3_1h'];
+                    d['NO2_Outdoor'] = +d['no2'];
                     d['hour'] = myFormat.parse(d['ts']).getHours();
-                    d['Month'] = myFormat.parse(d['ts']).getMonth();
+                    d['Month'] = myFormat.parse(d['ts']).getMonth()+1;
                 })
 
         
@@ -204,11 +209,11 @@
             console.log(data);
             console.log(data2);
 
-        	//initial var
-        	//width and height
-        	var w = 840;
-        	var h = 500;
-        	var padding = 40;
+          //initial var
+          //width and height
+          var w = 700;
+          var h = 500;
+          var padding = 40;
           var marginLeft = 20;
           var marginTop = 20;
           var marginBottom = 20;
@@ -217,36 +222,21 @@
 
           var edgeData = {}
 
-          var PMHigh = 35;
-          var CO2High = 800;
           
-          var inBox = 0;
-          var totalData = 0;
-
-          data.forEach(function(d) {
-          	if (d.hour > 9 && d.hour <18) {
-            totalData++;
-            if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High) {
-            //if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High && d.PM_Indoor>0 && d.CO2_Indoor>0) {
-                inBox++;
-            }
-        }
-          })
-
-          var comfPerct = Math.round(inBox/totalData*100);
-
-          console.log("size "+totalData+"inBox "+inBox + " " + comfPerct);
 
 
-            //create SVG1 element
+            //create SVG1 element -------------------------------------------------------------------------------------------------------------------
             
-            var svg = d3.select("body") 
+            var svg = d3.select("#content") 
                         .append("svg")
                         .attr("width", w + marginLeft + marginRight)
                         .attr("height", (h + marginTop + marginBottom))
                         .append("g")
                         .attr("transform","translate("+marginLeft+","+marginTop+")");
 
+                        //create SVG1 element
+            
+            
                 // svg.append("svg:image")
                 //     .attr("href", "background_2.jpg")
                 //     .attr("width", w+marginLeft+marginRight+scaleRatio)
@@ -275,13 +265,13 @@
             // svg.append("rect")
             //     .attr("fill", "url(#bg)");
 
-            var xStart = 300
-            var yStart = 0.8
+          var xStart = 300
+          var yStart = 0.8
 
-        	var xScale = d3.scale.linear()
+          var xScale = d3.scale.linear()
                                 .domain([xStart,1800])
                                 // .domain([0,d3.max(data,function(d){return (d['Out_Avg_Temp']>d['In_Avg_Temp'])?d['Out_Avg_Temp']:d['In_Avg_Temp'];})])
-        	                    .range([padding,w-padding*2]);
+                              .range([padding,w-padding*2]);
 
             console.log(xScale(100));
 
@@ -289,42 +279,34 @@
                                 .domain([yStart,1000])
                                 .range([h-padding,padding]);
 
-        	console.log(yScale(100));
+          console.log(yScale(100));
 
-        	//define x axis for svg1
-        	var xAxis = d3.svg.axis()
-        					  .scale(xScale)
-        					  .orient("bottom")
-        					  // .ticks(5);
+          //define x axis for svg1
+          var xAxis = d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom")
+                    // .ticks(5);
 
-        	var yAxis = d3.svg.axis()
-        					  .scale(yScale)
-        					  .orient("left")
-        					  // .ticks(5);					
-
-
-        	//create title
-        	svg.selectAll("text")
-        		.data([1])
-        		.enter()
-        		.append("text")
-        		.attr("x",(w-padding)/2)
-        		.attr("y",padding/2)
-        		.text("CO2 Concentration vs PM2.5 Concentration")
-        		.attr("font-family","sans-serif")
-        		.attr("text-anchor","middle")
-        		.attr("font-size","15px");
+          var yAxis = d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    // .ticks(5);         
 
 
-            //create percentage
-          svg.append("text")
+          //create title
+          svg.selectAll("text")
+            .data([1])
+            .enter()
+            .append("text")
             .attr("x",(w-padding)/2)
-            .attr("y",h)
-            .text("Occupied Hrs Within IAQ Compiant Zone -- " + comfPerct+"%")
+            .attr("y",padding/2)
+            .text("CO2 Concentration vs PM2.5 Concentration")
             .attr("font-family","sans-serif")
             .attr("text-anchor","middle")
-            .attr("font-size","15px")
-            .style("stroke", "Orange");
+            .attr("font-size","15px");
+
+
+            
 
           //create x-axis
           svg.append("g")
@@ -361,257 +343,7 @@
 
         console.log('hello');
 
-
-
-        //----------------------------------update function based on the checked tags-----------------------------------------------//
-
-         var monthValue = "All";
-         onchange();
-
-         function onchange() {
-
-            monthValue = []
-
-            d3.selectAll(".monthCheckBox").each(function(d) {
-              cd = d3.select(this)
-              if (cd.property("checked")) {
-                monthValue.push(cd.property("value"))
-              }
-            })
-
-            // monthValue = d3.select('select')
-            //                 .property('value')
-        
-            showCase = [];
-
-            d3.selectAll(".myCheckBox").each(function(d) {
-                cd = d3.select(this)
-                if (cd.property("checked")) {
-                  showCase.push(cd.property("value"))
-                }
-              }
-            )
-
-            console.log(monthValue);
-            console.log(showCase);
-
-            //update the data based on month
-
-            myData = [];
-
-            if (showCase.includes("Indoor")) {
-                if (monthValue.includes("All")) {
-                  data.forEach(function(d) {
-                    myData.push(d);
-                  })
-                }
-
-                else 
-                { 
-                  // console.log(+monthValue)
-                  data.forEach(function(d) {
-                    if (monthValue.includes(d.Month)) {
-                        myData.push(d);
-                    }
-                  })
-            }};
-
-
-            myOutData = [];
-
-            if (showCase.includes("Outdoor")) {
-              if (showCase.includes("Indoor")) {
-                data2.forEach(function(d) {
-                  myOutData.push(d);
-                })
-              }
-
-              else 
-              { 
-                //console.log(+monthValue)
-                data2.forEach(function(d) {
-                  if (monthValue.includes(d.Month)) {
-                      myOutData.push(d);
-                  }
-                })
-            }};
-
-            redraw();       
-        };
-
-
-
-        function redraw() {
-
-          svg.selectAll(".dataPlot").remove();
-
-          if (showCase.includes("DayTime")) {
-             svg.selectAll(".dataPlot")
-                  .data(myData.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && d['hour']>9 && d['hour'] < 18}))
-                    // .data(data.filter(function(d) {return d['class'] === 0}))
-                  .enter()
-                  .append("circle")
-                  .attr("class","dataPlot")
-                  .attr("cx",function(d){
-                    return xScale(d['CO2_Indoor']);
-                 })
-                  .attr("cy",function(d){
-                       return yScale(d['PM_Indoor']);
-                   })
-                  .attr("r",0.4)
-                  .style("stroke",'blue')
-                  .style("fill-opacity",'0');
-          }
-
-          // create indoordata
-          if (showCase.includes("NightTime")) {
-            svg.selectAll(".dataPlot")
-                //.data(data.filter(function(d) {return d['class'] == 1}))
-                  .data(myData.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && (d['hour']<9 || d['hour'] > 18)}))
-                  .enter()
-                  .append("circle")
-                 .attr("class","dataPlot")
-                 .attr("cx",function(d){
-                  return xScale(d['CO2_Indoor']);})
-                 .attr("cy",function(d){
-                     return yScale(d['PM_Indoor']);})
-               .attr("r",0.2)
-                 .style("stroke",'red')
-                 .style("fill-opacity",'0');
-          }
-
-
-
-            //----------------------Visualize the data for different operation time using different colors for indoor data
-            //bluecircle for operation time
-            //redtriangular for night time
-          //create circles
-
-
-          if (showCase.includes("DayTime")) {
-             svg.selectAll(".dataPlot")
-             .data(myOutData.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']>9 && d['hour'] < 18}))
-             // .data(data2.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']>9 && d['hour'] < 18}))
-                // .data(data.filter(function(d) {return d['class'] === 0}))
-             .enter()
-             .append("circle")
-               .attr("class","dataPlot")
-               .attr("cx",function(d){
-                return xScale(d['CO2_Outdoor']);
-             })
-               .attr("cy",function(d){
-                   return yScale(d['PM_Outdoor']);
-               })
-             .attr("r",0.4)
-               .style("stroke",'black')
-               .style("fill-opacity",'0');
-          }
-
-
-          if (showCase.includes("NightTime")) {
-             svg.selectAll(".dataPlot")
-             .data(myOutData.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']<9 || d['hour'] > 18}))
-             // .data(data2.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']>9 && d['hour'] < 18}))
-                // .data(data.filter(function(d) {return d['class'] === 0}))
-             .enter()
-             .append("circle")
-               .attr("class","dataPlot")
-               .attr("cx",function(d){
-                return xScale(d['CO2_Outdoor']);
-             })
-               .attr("cy",function(d){
-                   return yScale(d['PM_Outdoor']);
-               })
-             .attr("r",0.4)
-               .style("stroke",'black')
-               .style("fill-opacity",'0');
-          }
-
-
-        }
-
-
-
-
-
-  			//----------------------Visualize the data for different operation time using different colors for indoor data
-            //bluecircle for operation time
-            //redtriangular for night time
-        	//create circles
-
-          
-
-            
-
-          // create indoordata
-          // if (showCaseGlob.includes("Indoor") && showCaseGlob.includes("NightTime")) {
-          //   svg.selectAll(".nightTime")
-          //       //.data(data.filter(function(d) {return d['class'] == 1}))
-          //       .data(data.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && (d['hour']<9 || d['hour'] > 18)}))
-          //       .enter()
-          //       .append("circle")
-          //      .attr("class","inDoorData")
-          //      .attr("cx",function(d){
-          //       return xScale(d['CO2_Indoor']);
-          //    })
-          //      .attr("cy",function(d){
-          //          return yScale(d['PM_Indoor']);
-          //      })
-          //    .attr("r",0.2)
-          //      .style("stroke",'red')
-          //      .style("fill-opacity",'0');
-          // }
-
-
-
-
-
-            //bluecircle for outdoor
-            //redtriangular for positive
-        	//create circles
-        	// svg.selectAll(".outDoorData")
-        	//    .data(data.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0}))
-         //        // .data(data.filter(function(d) {return d['class'] === 0}))
-        	//    .enter()
-        	//    .append("circle")
-         //       .attr("class","outDoorData")
-         //       .attr("cx",function(d){
-        	//    		return xScale(d['CO2_Outdoor']);
-        	//    })
-         //       .attr("cy",function(d){
-         //           return yScale(d['PM_Outdoor']);
-         //       })
-        	//    .attr("r",0.1)
-         //       .style("stroke",'blue')
-         //       .style("fill-opacity",'0');
-
-            
-
-         //    //create indoordata
-         //    svg.selectAll(".inDoorData")
-         //        //.data(data.filter(function(d) {return d['class'] == 1}))
-         //        .data(data.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0}))
-         //        .enter()
-         //        .append("circle")
-         //       .attr("class","inDoorData")
-         //       .attr("cx",function(d){
-        	//    		return xScale(d['CO2_Indoor']);
-        	//    })
-         //       .attr("cy",function(d){
-         //           return yScale(d['PM_Indoor']);
-         //       })
-        	//    .attr("r",0.2)
-         //       .style("stroke",'red')
-               // .style("fill-opacity",'0');
-
-                // .append("path")
-                // .attr("d",d3.svg.symbol().type('triangle-up').size(5))
-                // .attr("class","positive")
-                // .attr("transform",function(d) {return 'translate('+xScale(d['plasma_glucose'])+','+yScale(d['insulin'])+')';})
-                // .style('stroke','red')
-                // .style('fill-opacity','0');
-
-            //create legend for negative
+        //create legend for negative
             legend = svg.append("g")
                         .attr("class","legend")
                         .attr("height",50)
@@ -689,7 +421,7 @@
                   .attr("class","legend")
                   .attr("x",w-100)
                   .attr("y",90)
-                  .text("Outdoor");
+                  .text("Outdoor Data");
 
 
 
@@ -706,11 +438,499 @@
             .attr("stroke", "black")
             .attr("strock-width", 3)
         })  
+
+
+
+
+        //create SVG2 element -------------------------------------------------------------------------------------------------------------------
+            
+          var svg2 = d3.select("#content") 
+                        .append("svg")
+                        .attr("width", w + marginLeft + marginRight)
+                        .attr("height", (h + marginTop + marginBottom))
+                        .append("g")
+                        .attr("transform","translate("+marginLeft+","+marginTop+")");
+  
+          var xStart2 = 0
+          var yStart2 = 0
+
+          var xScale2 = d3.scale.linear()
+                                .domain([xStart2,250])
+                                // .domain([0,d3.max(data,function(d){return (d['Out_Avg_Temp']>d['In_Avg_Temp'])?d['Out_Avg_Temp']:d['In_Avg_Temp'];})])
+                               .range([padding,w-padding*2]);
+
+          var yScale2 = d3.scale.linear()
+                                .domain([yStart2,400])
+                                .range([h-padding,padding]);
+
+
+          //define x axis for svg1
+          var xAxis2 = d3.svg.axis()
+                    .scale(xScale2)
+                    .orient("bottom")
+                    // .ticks(5);
+
+          var yAxis2 = d3.svg.axis()
+                    .scale(yScale2)
+                    .orient("left")
+                    // .ticks(5);         
+
+
+          //create title
+          svg2.selectAll("text")
+            .data([1])
+            .enter()
+            .append("text")
+            .attr("x",(w-padding)/2)
+            .attr("y",padding/2)
+            .text("NO2 Concentration vs O3 Concentration")
+            .attr("font-family","sans-serif")
+            .attr("text-anchor","middle")
+            .attr("font-size","15px");
+
+
+        
+
+          //create x-axis
+          svg2.append("g")
+             .attr("class","axis")
+             .attr("transform","translate(0,"+(h-padding)+")")
+             .call(xAxis2);
+
+          //x axis lable
+          svg2.append("text")
+             .attr("class","x lable")
+             .attr("text-anchor","end")
+             .attr("y",h - 50)
+             .attr("x",w - 60)
+             .style("front-size","12")
+             .text("NO2 Concentration");
+
+          //create y-axis
+          svg2.append("g")
+             .attr("class","axis")
+             .attr("transform","translate("+padding+",0)")
+             .call(yAxis2);
+
+
+          //y axis lable
+          svg2.append("text")
+             .attr("class","y lable")
+             .attr("text-anchor","end")
+             .attr("y",60)
+             .attr("x",-50)
+             .attr("transform","rotate(-90)")
+             .style("front-size","12")
+             .text("O3 Concentration");
+        
+
+        // console.log('hello');
+
+        //create legend for NO2
+            legend = svg2.append("g")
+                        .attr("class","legend")
+                        .attr("height",50)
+                        .attr("weight",w+30);
+
+            legend.selectAll("circle")
+                  .data([1])
+                  .enter()
+                  .append("circle")
+                  .attr("r",2)
+                  .style("stroke","blue")
+                  .style("fill-opacity","0")
+                  .attr("cx",(w-100-30))
+                  .attr("cy",50);
+
+            legend.selectAll("text")
+                  .data([1])
+                  .enter()
+                  .append("text")
+                  .attr("text-anchor","mid")
+                  .attr("class","legend")
+                  .attr("x",w-100)
+                  .attr("y",50)
+                  .text("Operation Hours");
+
+            //create legend for O3
+            legend = svg2.append("g")
+                        .attr("class","legend")
+                        .attr("height",50)
+                        .attr("weight",w+30);
+
+            legend.selectAll("path")
+                  .data([1])
+                  .enter()
+                  .append("path")
+                  .attr("d",d3.svg.symbol().type('triangle-up').size(6))
+                  .style("stroke","red")
+                  .style("fill-opacity","0")
+                  .attr("transform",function(d) {return 'translate('+(w-130)+','+(70)+')';})
+                  .attr("cx",(w-130))
+                  .attr("cy",50);
+
+            legend.selectAll("text")
+                  .data([1])
+                  .enter()
+                  .append("text")
+                  .attr("text-anchor","mid")
+                  .attr("class","legend")
+                  .attr("x",w-100)
+                  .attr("y",70)
+                  .text("Night Time");
+
+
+        //----------------------------------update function based on the checked tags-----------------------------------------------//
+
+         var monthValue = "All";
+         onchange();
+
+         function onchange() {
+
+        //Fisrt part for svg 1
+
+            monthValue = []
+
+            d3.selectAll(".monthCheckBox").each(function(d) {
+              cd = d3.select(this)
+              if (cd.property("checked")) {
+                monthValue.push(cd.property("value"))
+              }
+            })
+
+            // monthValue = d3.select('select')
+            //                 .property('value')
+        
+            showCase = [];
+
+            d3.selectAll(".myCheckBox").each(function(d) {
+                cd = d3.select(this)
+                if (cd.property("checked")) {
+                  showCase.push(cd.property("value"))
+                }
+              }
+            )
+
+            console.log(monthValue);
+            console.log(showCase);
+
+            //update the data based on month
+
+            myData = [];
+
+            if (showCase.includes("Indoor")) {
+                if (monthValue.includes("All")) {
+                  data.forEach(function(d) {
+                    myData.push(d);
+                  })
+                }
+
+                else 
+                { 
+                  // console.log(+monthValue)
+                  data.forEach(function(d) {
+                    if (monthValue.includes(d.Month)) {
+                        myData.push(d);
+                    }
+                  })
+            }};
+
+
+            myOutData = [];
+
+            if (showCase.includes("Outdoor")) {
+              if (monthValue.includes("All")) {
+                data2.forEach(function(d) {
+                  myOutData.push(d);
+                })
+              }
+
+              else 
+              { 
+                //console.log(+monthValue)
+                data2.forEach(function(d) {
+                  if (monthValue.includes(""+d.Month)) {
+                      myOutData.push(d);
+                  }
+                })
+            }};
+
+            redraw_svg1();       
+            redraw_svg2();
+        };
+
+        
+        //----------------------------------Plot data on svg1-----------------------------------------------//
+        function redraw_svg1() {
+
+          svg.selectAll(".dataPlotDayIn").remove();
+          svg.selectAll(".dataPlotDayOut").remove();
+          svg.selectAll(".dataPlotNightIn").remove();
+          svg.selectAll(".dataPlotNightOut").remove();
+          svg.selectAll(".percentage").remove();
+
+          if (showCase.includes("DayTime")) {
+
+             // container to contain the data for day time
+              myDataInDay = [];
+              
+              myData.forEach(function(d) {
+                if (d['hour']>9 && d['hour'] < 18) {
+                  myDataInDay.push(d);
+                };
+              })
+
+
+             svg.selectAll(".dataPlotDayIn")
+                  .data(myData.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && d['hour']>9 && d['hour'] < 18}))
+                    // .data(data.filter(function(d) {return d['class'] === 0}))
+                  .enter()
+                  .append("circle")
+                  .attr("class","dataPlotDayIn")
+                  .attr("cx",function(d){
+                    return xScale(d['CO2_Indoor']);
+                 })
+                  .attr("cy",function(d){
+                       return yScale(d['PM_Indoor']);
+                   })
+                  .attr("r",0.4)
+                  .style("stroke",'blue')
+                  .style("fill-opacity",'0.5');
+
+              svg.selectAll(".dataPlotDayOut")
+                //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myOutData.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","dataPlotDayOut")
+                 .attr("cx",function(d){
+                  return xScale(d['CO2_Outdoor']);})
+                 .attr("cy",function(d){
+                     return yScale(d['PM_Outdoor']);})
+                 .attr("r",0.2)
+                 .style("stroke",'black')
+                 .style("fill-opacity",'0.5');
+          }
+
+
+
+          // create indoordata
+          if (showCase.includes("NightTime")) {
+            svg.selectAll(".dataPlotNightIn")
+                //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && (d['hour']<9 || d['hour'] > 18)}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","dataPlotNightIn")
+                 .attr("cx",function(d){
+                  return xScale(d['CO2_Indoor']);})
+                 .attr("cy",function(d){
+                     return yScale(d['PM_Indoor']);})
+                 .attr("r",0.2)
+                 .style("stroke",'red')
+                 .style("fill-opacity",'0.5');
+
+
+            svg.selectAll(".dataPlotNightOut")
+                //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myOutData.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","dataPlotNightOut")
+                 .attr("cx",function(d){
+                  return xScale(d['CO2_Outdoor']);})
+                 .attr("cy",function(d){
+                     return yScale(d['PM_Outdoor']);})
+                 .attr("r",0.2)
+                 .style("stroke",'black')
+                 .style("fill-opacity",'0.5');
+          }
+
+
+            //----------------------Visualize the data for different operation time using different colors for indoor data
+            //bluecircle for operation time
+            //redtriangular for night time
+
+
+            //Percentage in comfort zone
+            var PMHigh = 35;
+            var CO2High = 800;
+            
+            var inBox = 0;
+            var totalData = 0;
+
+
+            myDataInDay.forEach(function(d) {
+              if (d.hour > 9 && d.hour <18) {
+                  totalData++;
+              if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High) {
+              //if (d.PM_Indoor<PMHigh && d.CO2_Indoor<CO2High && d.PM_Indoor>0 && d.CO2_Indoor>0) {
+                  inBox++;
+              }
+            }
+            })
+
+          
+            var comfPerct = Math.round(inBox/totalData*100);
+            console.log("size "+totalData+"inBox "+inBox + " " + comfPerct);
+            
+            //create percentage
+            svg.append("text")
+              .attr("class", "percentage")
+              .attr("x",(w-padding)/2)
+              .attr("y",h)
+              .text("Occupied Hrs Within IAQ Compiant Zone -- " + comfPerct+"%")
+              .attr("font-family","sans-serif")
+              .attr("text-anchor","middle")
+              .attr("font-size","15px");
+
+        }
+
+        
+
+
+
+        //----------------------------------Plot data on svg2-----------------------------------------------//
+        function redraw_svg2() {
+
+           svg2.selectAll(".dataPlot2").remove();
+           console.log("start of svg2");
+
+            //----------------------Visualize the data for different operation time using different colors for outdoor data
+            //bluecircle for operation time
+            //redtriangular for night time
+          //create circles
+
+          if (showCase.includes("DayTime")) {
+             svg2.selectAll(".dataPlot2")
+             .data(myOutData.filter(function(d) {return  d['hour']>9 && d['hour'] < 18}))
+             // .data(data2.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']>9 && d['hour'] < 18}))
+                // .data(data.filter(function(d) {return d['class'] === 0}))
+             .enter()
+             .append("circle")
+               .attr("class","dataPlot2")
+               .attr("cx",function(d){
+                return xScale2(d['NO2_Outdoor']);
+             })
+               .attr("cy",function(d){
+                   return yScale2(d['O3_Outdoor']);
+               })
+             .attr("r",0.4)
+               .style("stroke",'blue')
+               .style("fill-opacity",'0');
+          }
+
+
+          if (showCase.includes("NightTime")) {
+             svg2.selectAll(".dataPlot2")
+             .data(myOutData.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
+             // .data(data2.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0 && d['hour']>9 && d['hour'] < 18}))
+                // .data(data.filter(function(d) {return d['class'] === 0}))
+             .enter()
+             .append("circle")
+               .attr("class","dataPlot2")
+               .attr("cx",function(d){
+                return xScale2(d['NO2_Outdoor']);
+             })
+               .attr("cy",function(d){
+                   return yScale2(d['O3_Outdoor']);
+               })
+             .attr("r",0.4)
+               .style("stroke",'red')
+               .style("fill-opacity",'0');
+          }
+        }
+
+
+
+
+
+
+
+
+
+        //----------------------Visualize the data for different operation time using different colors for indoor data
+            //bluecircle for operation time
+            //redtriangular for night time
+          //create circles
+
+          
+
+            
+
+          // create indoordata
+          // if (showCaseGlob.includes("Indoor") && showCaseGlob.includes("NightTime")) {
+          //   svg.selectAll(".nightTime")
+          //       //.data(data.filter(function(d) {return d['class'] == 1}))
+          //       .data(data.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0 && (d['hour']<9 || d['hour'] > 18)}))
+          //       .enter()
+          //       .append("circle")
+          //      .attr("class","inDoorData")
+          //      .attr("cx",function(d){
+          //       return xScale(d['CO2_Indoor']);
+          //    })
+          //      .attr("cy",function(d){
+          //          return yScale(d['PM_Indoor']);
+          //      })
+          //    .attr("r",0.2)
+          //      .style("stroke",'red')
+          //      .style("fill-opacity",'0');
+          // }
+
+
+
+
+
+            //bluecircle for outdoor
+            //redtriangular for positive
+          //create circles
+          // svg.selectAll(".outDoorData")
+          //    .data(data.filter(function(d) {return d['CO2_Outdoor']>0 && d['PM_Outdoor']>0}))
+         //        // .data(data.filter(function(d) {return d['class'] === 0}))
+          //    .enter()
+          //    .append("circle")
+         //       .attr("class","outDoorData")
+         //       .attr("cx",function(d){
+          //        return xScale(d['CO2_Outdoor']);
+          //    })
+         //       .attr("cy",function(d){
+         //           return yScale(d['PM_Outdoor']);
+         //       })
+          //    .attr("r",0.1)
+         //       .style("stroke",'blue')
+         //       .style("fill-opacity",'0');
+
+            
+
+         //    //create indoordata
+         //    svg.selectAll(".inDoorData")
+         //        //.data(data.filter(function(d) {return d['class'] == 1}))
+         //        .data(data.filter(function(d) {return d['CO2_Indoor']>0 && d['PM_Indoor']>0}))
+         //        .enter()
+         //        .append("circle")
+         //       .attr("class","inDoorData")
+         //       .attr("cx",function(d){
+          //        return xScale(d['CO2_Indoor']);
+          //    })
+         //       .attr("cy",function(d){
+         //           return yScale(d['PM_Indoor']);
+         //       })
+          //    .attr("r",0.2)
+         //       .style("stroke",'red')
+               // .style("fill-opacity",'0');
+
+                // .append("path")
+                // .attr("d",d3.svg.symbol().type('triangle-up').size(5))
+                // .attr("class","positive")
+                // .attr("transform",function(d) {return 'translate('+xScale(d['plasma_glucose'])+','+yScale(d['insulin'])+')';})
+                // .style('stroke','red')
+                // .style('fill-opacity','0');
+
+            
         
       
 
      })          
-        //use jason to read file and visualize
        
     });
         

@@ -96,14 +96,15 @@
                 //         }
                 //     )
                 // })
-                var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
+                // var parseTime = d3.timeParse("%m/%d/%Y %H:%M");
+                var parseTime = d3.timeParse("%H");
     
                 data.forEach(function(d) {
-                    d['time'] = parseTime(d['ts']);
+                    d['time'] = parseTime(d['Hour']);
                     d['Out_Avg_Temp'] = +d['Outdoor-Avg Temp'];
                     d['Out_Avg_RH'] = +d['Outdoor-Avg RH'];
-                    d['In_Avg_Temp'] = +d['temperature'];
-                    d['In_Avg_RH'] = +d['humidity'];
+                    d['In_Avg_Temp'] = +d['Indoor-Avg Temp'];
+                    d['In_Avg_RH'] = +d['Indoor-Avg RH'];
                     d['In_Avg_CO2'] = +d['Indoor-Avg CO2'];
                 })
 

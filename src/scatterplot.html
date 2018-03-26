@@ -11,13 +11,13 @@
     </head>
 
     <!-- function ( row ) {
-        return !d3.entries(row).some( 
+        return !d3.entries(row).some(
           function( keyValue ) {
             return ( isRequiredKey( keyValue.key ) && isNaN( keyValue.value ) )
           }
         );
       }; -->
-    
+
     <body>
             <nav class="navbar navbar-default">
                     <div class="container-fluid">
@@ -31,7 +31,7 @@
                         </button>
                         <a class="navbar-brand" href="scatterplot.html">i-DRC</a>
                       </div>
-                  
+
                       <!-- Collect the nav links, forms, and other content for toggling -->
                       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
@@ -98,8 +98,8 @@
      <!--      <label for = "type">Type:</label>
           <select id = "type">Type</select>
         </form> -->
-        
-        <!-- <dir>   
+
+        <!-- <dir>
             <form>Month
             <select id="time">
             <option value=0 selected="selected">All</option>
@@ -123,13 +123,11 @@
 
             d3.csv("Fuxing_lu_2017_modified.csv", function(data) {
               d3.csv("weather_outside.csv", function(data_outDoor) {
-            
+
 
             // d3.selectAll("myCheckBox").on("change", update);
 
             var month_elements = ["All","1","2","3","4","5","6","7","8","9","10","11","12"];
-
-            d3.selectAll(".myCheckBox").on("change",onchange);
 
 
             // d3.select("#type")
@@ -154,7 +152,7 @@
 
 
             d3.select("#month2").selectAll("input")
-              .on("change", onchange)
+              .attr("class","monthCheckBox")
               .data(month_elements)
               .enter()
               .append('label')
@@ -165,11 +163,10 @@
                   .attr("type", "checkbox")
                   .attr("class", "monthCheckBox")
                   .attr("value", function(d) {return d;})
-          
+
+            
+            d3.selectAll(".myCheckBox").on("change",onchange);
             d3.selectAll(".monthCheckBox").on("change",onchange);
-
-
-
 
 
 
@@ -178,7 +175,7 @@
                 //     if(isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'] || isNaN(d['Outdoor-Avg Temp'])) {
                 //         return false;
                 //     }
-                    
+
                 // }
 
 
@@ -201,19 +198,19 @@
                     d['Month'] = d['month'];
                     d['time'] = myFormat.parse(d['ts']);
                 })
-                
+
 
 
                 data_outDoor.forEach(function(d) {
                     // d['Out_Avg_Temp'] = +d['Out_Avg_Temp'];
                     // d['Out_RH'] = (+d['Out_RH'])*0.78;
                     d['temp_outDoor'] = +d['DBT'];
-                    d['ah_outDoor'] = (+d['RH'])*0.78;
+                    d['ah_outDoor'] = (+d['AH'])*0.78;
                     d['time'] = myFormat.parse(d['time_weather']);
                     d['Month'] = (myFormat.parse(d['time_weather'])).getMonth();
                     d['hour'] = myFormat.parse(d['time_weather']).getHours();
                 })
-        
+
     //             data = data.filter(function(d){
     //     if(isNaN(d.value)){
     //         return false;
@@ -240,8 +237,8 @@
           var edgeData = {}
 
             //create SVG1 element
-            
-            var svg = d3.select("body") 
+
+            var svg = d3.select("body")
                         .append("svg")
                         .attr("width", w + marginLeft + marginRight)
                         .attr("height", (h + marginTop + marginBottom))
@@ -281,9 +278,9 @@
                                 // .domain([0,d3.max(data,function(d){return (d['Out_Avg_Temp']>d['In_Avg_Temp'])?d['Out_Avg_Temp']:d['In_Avg_Temp'];})])
         	                    .range([padding,w-padding*2]);
 
-            console.log(xScale(100));
+          console.log(xScale(100));
 
-            var yScale = d3.scale.linear()
+          var yScale = d3.scale.linear()
                                 .domain([0,0.030])
                                 .range([h-padding,padding]);
 
@@ -298,7 +295,7 @@
         	var yAxis = d3.svg.axis()
         					  .scale(yScale)
         					  .orient("left")
-        					  .ticks(5);					
+        					  .ticks(5);
 
 
         	//create title
@@ -330,9 +327,8 @@
               }
             })
 
-        
-            showCase = [];
 
+            showCase = [];
 
             console.log("start point")
             // data for indoor
@@ -350,26 +346,24 @@
 
             //update the indoor data based on month
             myData = [];
+        
 
             if (showCase.includes("Indoor")) {
               if (monthValue.includes("All")) {
                 data.forEach(function(d) {
-                  myData.push(d);
+                  myData.push(d);       
                 })
               }
-
-              else 
-              { 
-                // console.log(+monthValue)            
+              else
+              {
+                // console.log(+monthValue)
                   data.forEach(function(d) {
                     if (monthValue.includes(d.Month)) {
-                        myData.push(d);
+                        myData.push(d);                    
                     }
                   })
-                }           
+                }
             }
-
-
 
 
             //------------------------------------------//
@@ -378,42 +372,57 @@
 
 
             if (showCase.includes("Outdoor")) {
-                if (monthValue == "All") {
-                  data_outDoor.forEach(function(d) {
+                if (monthValue.includes("All")) {
+                    data_outDoor.forEach(function(d) {
                     myData_outDoor.push(d);
                   })
                 }
-
-                else 
-                { 
-                  console.log(+monthValue)
+                else
+                {
+                  // console.log(+monthValue)
                   data_outDoor.forEach(function(d) {
-                    if (d.Month == +monthValue) {
+                    if (monthValue.includes(""+d.Month)) {
                         myData_outDoor.push(d);
                     }
                   })
                 };
 
-                redraw();       
-            }};
+            }
+
+
+          redraw();
+          calPerc();
+          };
 
 
 
 
         function redraw() {
 
-          svg.selectAll(".inDoorData").remove();
-          svg.selectAll(".outDoorData").remove();
+          svg.selectAll(".inDoorDataDay").remove();
+          svg.selectAll(".outDoorDataDay").remove();
+          svg.selectAll(".inDoorDataNight").remove();
+          svg.selectAll(".outDoorDataNight").remove();
 
 
           // indoor daytime data
           if (showCase.includes("DayTime")) {
-              svg.selectAll(".inDoorData")
+
+            // container to contain the data for day time
+              myDataInDay = [];
+              
+              myData.forEach(function(d) {
+                if (d['hour']>9 && d['hour'] < 18) {
+                  myDataInDay.push(d);
+                };
+              })
+
+              svg.selectAll(".inDoorDataDay")
                   //.data(data.filter(function(d) {return d['class'] == 1}))
                   .data(myData.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
                   .enter()
                   .append("circle")
-                 .attr("class","inDoorData")
+                 .attr("class","inDoorDataDay")
                  .attr("cx",function(d){
                   return xScale(d['In_Avg_Temp']);
                })
@@ -422,18 +431,38 @@
                  })
                .attr("r",0.7)
                  .style("stroke",'blue')
-                 .style("fill-opacity",'0');
+                 .style("fill-opacity",'1');
+
+
+
+
+              svg.selectAll(".outDoorDataDay")
+                  //.data(data.filter(function(d) {return d['class'] == 1}))
+                  .data(myData_outDoor.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
+                  .enter()
+                  .append("circle")
+                 .attr("class","outDoorDataDay")
+                 .attr("cx",function(d){
+                  return xScale(d['temp_outDoor']);
+               })
+                 .attr("cy",function(d){
+                     return yScale(d['ah_outDoor']*0.903);
+                 })
+               .attr("r",0.7)
+                 .style("stroke",'black')
+                 .style("fill-opacity",'0.001');
               }
 
 
             //create indoordata nighttime
             if (showCase.includes("NightTime")) {
-              svg.selectAll(".inDoorData")
+
+              svg.selectAll(".inDoorDataNight")
                   //.data(data.filter(function(d) {return d['class'] == 1}))
                   .data(myData.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
                   .enter()
                   .append("circle")
-                 .attr("class","inDoorData")
+                 .attr("class","inDoorDataNight")
                  .attr("cx",function(d){
                   return xScale(d['In_Avg_Temp']);
                })
@@ -442,41 +471,15 @@
                  })
                .attr("r",0.7)
                  .style("stroke",'red')
-                 .style("fill-opacity",'0');
-              }
+                 .style("fill-opacity",'1');
 
 
-
-
-//-----------------------------------------------------------------------------------------------
-              //outdoor daytime data
-              if (showCase.includes("DayTime")) {
-              svg.selectAll(".outDoorData")
-                  //.data(data.filter(function(d) {return d['class'] == 1}))
-                  .data(myData_outDoor.filter(function(d) {return d['hour']>9 && d['hour'] < 18}))
-                  .enter()
-                  .append("circle")
-                 .attr("class","outDoorData")
-                 .attr("cx",function(d){
-                  return xScale(d['temp_outDoor']);
-               })
-                 .attr("cy",function(d){
-                     return yScale(d['ah_outDoor']*0.903);
-                 })
-               .attr("r",0.7)
-                 .style("stroke",'blue')
-                 .style("fill-opacity",'0.5');
-              }
-
-
-              //create outdoor nighttime
-            if (showCase.includes("NightTime")) {
-              svg.selectAll(".outDoorData")
+              svg.selectAll(".outDoorDataNight")
                   //.data(data.filter(function(d) {return d['class'] == 1}))
                   .data(myData_outDoor.filter(function(d) {return d['hour']<9 || d['hour'] > 18}))
                   .enter()
                   .append("circle")
-                 .attr("class","outDoorData")
+                 .attr("class","outDoorDataNight")
                  .attr("cx",function(d){
                   return xScale(d['temp_outDoor']);
                })
@@ -484,15 +487,105 @@
                      return yScale(d['ah_outDoor']*0.903);
                  })
                .attr("r",0.7)
-                 .style("stroke",'red')
-                 .style("fill-opacity",'0.5');
-              }
+                 .style("stroke",'black')
+                 .style("fill-opacity",'0.001');
+              }          
+          };
+
+
+          function calPerc() {
+
+            // Calculate the percentage of points that lay into the safety zone
+
+              svg.selectAll(".percent").remove();
+
+              var indoorinBox = 0;
+              var totalData = 0;
+              var points = [
+                    {"x":20.0,"y":0.003},
+                    {"x":20.0,"y":0.0117},
+                    {"x":22.7,"y":0.0136},
+                    {"x":26.0,"y":0.0122},
+                    {"x":26.0,"y":0.003}]
+              var iCount = points.length;
+              var iSum_in;
+              var iSum_out;
+
+              myDataInDay.forEach(function(d){
+                    totalData++;
+                    iSum_in= 0;
+                    var Count = 0;
+                    var iIndex = 0;
+              var dLon1 = 0, dLon2 = 0, dLat1 = 0, dLat2 = 0;
+              var dLon;
+              var indoor_y = d['In_RH'];
+              var indoor_x =  d['In_Avg_Temp'];
+               for (iIndex = 0; iIndex<iCount;iIndex++){
+                   if (iIndex == iCount - 1) {
+                       dLon1 = points[iIndex].x;
+                       dLat1 = points[iIndex].y;
+                       dLon2 = points[0].x;
+                       dLat2 = points[0].y;
+                   } else {
+                       dLon1 = points[iIndex].x;
+                       dLat1 = points[iIndex].y;
+                       dLon2 = points[iIndex + 1].x;
+                       dLat2 = points[iIndex + 1].y;
+                   }
+                   // 以下语句判断A点是否在边的两端点的水平平行线之间，在则可能有交点，开始判断交点是否在左射线上
+                   if (((indoor_y >= dLat1) && (indoor_y < dLat2)) || ((indoor_y >= dLat2) && (indoor_y< dLat1))) {
+                           dLon = dLon1 - ((dLon1 - dLon2) * (dLat1 - indoor_y) ) / (dLat1 - dLat2);
+                           //console.log(dLon,d.In_Avg_Temp)
+                           if (dLon < indoor_x) {
+                               iSum_in++;
+                           }
+
+                   }
+               }
+               if ((iSum_in % 2) != 0) {
+                    indoorinBox++;
+               }
+
+                    //if (d.In_RH<0.015 && d.In_RH>0.005 && d.In_Avg_Temp<25 && d.In_Avg_Temp>15) {
+                        //indoorinBox++;
+                  //  }
+                  //  if (d.Out_RH<0.015 && d.Out_RH>0.005 && d.Out_Avg_Temp<25 && d.Out_Avg_Temp>15) {
+                      //  outdoorinBox++;
+                  //  }
+                  })
+                  var indoor_comfPerct = Math.round(indoorinBox/totalData*100);
+                  console.log("The percent is", indoor_comfPerct);
+
+
+                  //create percentage
+                  svg
+                    .append("text")
+                    .attr("x",(w-padding)/2)
+                    .attr("y",h)
+                    .attr("class","percent")
+                    .text("Occupied Hrs Within IAQ Compiant Zone -- " + indoor_comfPerct+"%")
+                    .attr("font-family","sans-serif")
+                    .attr("text-anchor","middle")
+                    .attr("font-size","15px");
+          } 
 
 
 
-        }
+//-----------------------------------------------------------------------------------------------
+            //   //outdoor daytime data
+            //   if (showCase.includes("DayTime")) {
+              
+            //   }
 
-        
+
+            //   //create outdoor nighttime
+            // if (showCase.includes("NightTime")) {
+              
+            //   }
+
+       
+
+
 
 
             // //create x-axis
@@ -526,7 +619,7 @@
             //    .attr("transform","rotate(-90)")
             //    .style("front-size","12")
             //    .text("Humidity Ratio (gm Water / gm of Dry Air)");
-        
+
 
             console.log('hello');
 
@@ -550,11 +643,11 @@
          //       .style("stroke",'blue')
          //       .style("fill-opacity",'0');
 
-            
+
 
             //create indoordata daytime
-            
-  
+
+
 
             //create indoordata nighttime
 
@@ -579,7 +672,7 @@
          // //       .style("stroke",'blue')
          // //       .style("fill-opacity",'0');
 
-            
+
 
          //    //create indoordata
          //    svg.selectAll(".inDoorData")
@@ -654,24 +747,54 @@
                   .append("text")
                   .attr("text-anchor","mid")
                   .attr("class","legend")
-                  .attr("x",w-45)
+                  .attr("x",w-35)
                   .attr("y",70)
                   .text("NightTime");
+
+
+              //create legend for outdoor data
+            legend = svg.append("g")
+                        .attr("class","legend")
+                        .attr("height",50)
+                        .attr("weight",w+30);
+
+            legend.selectAll("circle")
+                  .data([1])
+                  .enter()
+                  .append("circle")
+                  .attr("r",2)
+                  .style("stroke","black")
+                  .style("fill-opacity","0")
+                  .attr("cx",(w-45))
+                  .attr("cy",90);
+
+            legend.selectAll("text")
+                  .data([1])
+                  .enter()
+                  .append("text")
+                  .attr("text-anchor","mid")
+                  .attr("class","legend")
+                  .attr("x",w-35)
+                  .attr("y",90)
+                  .text("Outdoor Data");
+
+
+
 
         //high light certain area
         d3.json("data.json", function(data) {
             svg.selectAll("Polygons")
             .data(data.Polygons)
-            .enter() 
+            .enter()
             .append("polygon")
             .attr("opacity", 0.5)
             .attr("fill", "yellow")
             .attr("points", function(d) {return d.points.map(function(d) {return [xScale(d.x), yScale(d.y)].join(",");}).join(" ");})
             .attr("stroke", "black")
             .attr("strock-width", 3)
-        })  
-        
-        
+        })
+
+
         // var area = svg.append("polygon")
         //             .attr("points","200,10,250,190,160,210")
         //             .attr("opacity",0.5)
@@ -679,7 +802,7 @@
         //             .attr("stroke","blue")
         //             .attr("stroke-width",3)
 
-                   
+
         //use jason to read file and visualize
       })
     });
@@ -687,7 +810,7 @@
 
         </script>
     </body>
-</html>    
+</html>
 
 <!-- http://bl.ocks.org/cpbotha/5200394
 http://www.d3noob.org/2014/02/styles-in-d3js.html
@@ -698,8 +821,8 @@ http://bl.ocks.org/arunkjn/5042953 -->
     svg.selectAll("polygon")
       .data(data.Polygons)
       .enter().append("polygon")
-      .attr("points",function(d) { 
+      .attr("points",function(d) {
             return d.points.map(function(d) { return [scaleX(d.x),scaleY(d.y)].join(","); }).join(" ");})
         .attr("stroke","black")
-        .attr("stroke-width",2); 
+        .attr("stroke-width",2);
   }); -->
